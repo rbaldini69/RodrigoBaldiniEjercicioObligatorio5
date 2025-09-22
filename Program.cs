@@ -9,8 +9,8 @@ namespace RodrigoBaldiniEjercicioObligatorio5
             MaquinaVirtualAplicacion maquinaVirtual1 = new MaquinaVirtualAplicacion("MV1", "Linux", "1.0", false, "C#", "9.0", "http://baseVM1");
             MaquinaVirtualAplicacion maquinaVirtual2 = new MaquinaVirtualAplicacion("MV2", "Windows", "11.0", false,"javascript", "9.0", "http://baseVM2");
             MaquinaVirtualProceso maquinaVirtual3 = new MaquinaVirtualProceso("MV3", "Linux", "1.0", false, "http://origenVM3", "http://finVM3");
-            MaquinaVirtualProceso maquinaVirtual4 = new MaquinaVirtualProceso("MV4", "Windows", "11.0", false, "", "http://finVM4");
-            
+            MaquinaVirtualProceso maquinaVirtual4 = new MaquinaVirtualProceso("MV4", "Windows", "11.0", false, "", "http://finVM4");//sin datos de origen
+
             MaquinaVirtual[] maquinas = new MaquinaVirtual[] { maquinaVirtual1, maquinaVirtual2,maquinaVirtual3,maquinaVirtual4 };
             Console.WriteLine("Levantando todas las maquinas virtuales:");
             foreach (var maquina in maquinas)
@@ -24,18 +24,23 @@ namespace RodrigoBaldiniEjercicioObligatorio5
             Console.WriteLine("\n Listado de maquinas virtuales:");
             foreach (var maquina in maquinas)
             {
-                Console.WriteLine($"Nombre: {maquina.Nombre}, Estado: {(maquina.Estado?"Levantada":"Bajada")} ");
-
+                if (maquina is MaquinaVirtualAplicacion)
+                {
+                    maquina.Listar();
+                }
+                else if(maquina is MaquinaVirtualProceso){
+                    maquina.Listar();
+                }
             }
 
         }
     }
     public abstract class MaquinaVirtual
     {
-        public string Nombre;
-        public string SistemaOperativo;
-        public string version;
-        public bool Estado;
+        protected string Nombre;
+        protected string SistemaOperativo;
+        protected string version;
+        protected bool Estado;
         public MaquinaVirtual(string Nombre, string SistemaOperativo, string version, bool Estado)
         {
             this.Nombre = Nombre;
@@ -54,11 +59,12 @@ namespace RodrigoBaldiniEjercicioObligatorio5
             this.Estado = false;
             Console.WriteLine($"\n Maquina virtual {this.Nombre} Bajada correctamente");
         }
+       public abstract void Listar();
     }
     public class MaquinaVirtualProceso: MaquinaVirtual
     {
-        public string datosOrigen;
-        public string datosFin;
+        private string datosOrigen;
+        private string datosFin;
         public MaquinaVirtualProceso(string Nombre, string SistemaOperativo, string version, bool estado, string datosOrigen, string datosFin)
             : base(Nombre, SistemaOperativo, version, estado) 
         {
@@ -102,13 +108,16 @@ namespace RodrigoBaldiniEjercicioObligatorio5
         {
             Console.WriteLine($"acceso correcto a {datosOrigen} y a {datosFin}...");
         }
-
+        public override void Listar()
+        {
+            Console.WriteLine($"Maquina Virtual de Proceso: {this.Nombre}, SO: {this.SistemaOperativo}, Version: {this.version}, Estado: {(this.Estado ? "Levantada" : "Bajada")}");
+        }
     }
     public class MaquinaVirtualAplicacion: MaquinaVirtual
     {
-        public string lenguajeDeProgramación;
-        public string VersionDelLenguaje;
-        public string BaseDeDatos;
+        private string lenguajeDeProgramación;
+        private string VersionDelLenguaje;
+        private string BaseDeDatos;
 
         public MaquinaVirtualAplicacion(string Nombre, string SistemaOperativo, string version, bool estado,
                                         string lenguajeDeProgramacion, string versionDelLenguaje,string baseDeDatos)
@@ -155,6 +164,10 @@ namespace RodrigoBaldiniEjercicioObligatorio5
         public void ActualizarAplicacion(string nombreApp)
         {
             Console.WriteLine($"Actualizando aplicacion {nombreApp}...");
+        }
+        public override void Listar()
+        {
+            Console.WriteLine($"Maquina Virtual de Aplicacion: {this.Nombre}, SO: {this.SistemaOperativo}, Version: {this.version}, Estado: {(this.Estado ? "Levantada" : "Bajada")}");
         }
     }
 }
